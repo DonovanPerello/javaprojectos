@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html","k":"18"},{"p":"cat.paucasesnovescifp.ifc32a.calculator","l":"Calculator"}];updateSearchResults();
