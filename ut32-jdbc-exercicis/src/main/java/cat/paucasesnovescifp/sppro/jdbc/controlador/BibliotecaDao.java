@@ -1,7 +1,14 @@
 package cat.paucasesnovescifp.sppro.jdbc.controlador;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
-
+import java.lang.AutoCloseable;
 import cat.paucasesnovescifp.sppro.jdbc.auxiliars.JDBCException;
 
 /**
@@ -30,7 +37,9 @@ public class BibliotecaDao {
     private String url;
     private Properties uP;
 
-    public BibliotecaDao(String url, Properties propiedades) {
+    public BibliotecaDao(String url, Properties propiedades) throws JDBCException {
+        setUrl(url);
+        setuP(propiedades);
     }
 
     public String getUrl() {
@@ -54,6 +63,63 @@ public class BibliotecaDao {
                     "El objeto Properties debe contener obligatoriamente las propiedades 'user' y 'password'");
         }
         this.uP = uP;
+    }
+
+    /**
+     * Exercici: 4
+     * 
+     * Crea un mètode a la classe BibliotecaDao que torni totes els departaments que
+     * hi ha a la base de dades. Ho pot fer com a una llista de String. A la classe
+     * ProvesJDBC mostra els departaments que torna el mètode anterior.
+     * 
+     * @author Donovan Perello
+     */
+
+    public List<String> departamentsBiblio() throws JDBCException {
+        List<String> departamentos = new ArrayList<>();
+        String sql = "SELECT DEPARTAMENT FROM DEPARTAMENTS";
+        try (Connection con = DriverManager.getConnection(url, uP);
+                Statement st = con.createStatement();
+                ResultSet rs = st.executeQuery(sql);) {
+            while (rs.next()) {
+
+                departamentos.add(rs.getString("DEPARTAMENT"));
+            }
+
+        } catch (SQLException e) {
+
+            throw new JDBCException("Error de base de datos: " + e.getMessage());
+        }
+        return departamentos;
+    }
+
+    /**
+     * Exercici: 5
+     * 
+     * Crea un mètode a la classe BibliotecaDao que rebi com a paràmetre el valor
+     * d'un departament i l’insereixi a la base de dades. Si hi ha cap errada ha de
+     * llençar una excepció. Crida’l des del main.
+     * 
+     * @author Donovan Perello
+     */
+
+    public int insertarDepartament(String departament) throws JDBCException {
+
+        String sql = "INSERT INTO DEPARTAMENTS (DEPARTAMENT) VALUES ('" + departament + "')";
+        try (
+                Connection con = DriverManager.getConnection(url, uP);
+                Statement st = con.createStatement();
+
+        ) {
+            int filesAfectades = st.executeUpdate(sql);
+
+            return filesAfectades;
+
+        } catch (SQLException e) {
+
+            throw new JDBCException("Error de base de datos: " + e.getMessage());
+        }
+
     }
 
 }
