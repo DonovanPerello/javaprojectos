@@ -2,12 +2,14 @@ package cat.paucasesnovescifp.sppro.jdbc.controlador;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
 import cat.paucasesnovescifp.sppro.jdbc.auxiliars.JDBCException;
 
 /**
@@ -178,6 +180,34 @@ public class BibliotecaDao {
             throw new JDBCException("Error de base de datos: " + e.getMessage());
         }
         return libros;
+    }
+    /**
+     * Exercici: 8
+     * 
+     * Repeteix l'exercici anterior, però ara utilitzant un PreparedStatement.
+     * 
+     * @author Donovan Perello
+     */
+
+    public List<String> llibresDepartamentPreparedStatement(String departament) throws JDBCException {
+        List<String> libros = new ArrayList<>();
+        String sql = "SELECT TITOL FROM LLIBRES WHERE FK_DEPARTAMENT = ?";
+        try (Connection con = DriverManager.getConnection(url, uP);
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        ) {
+            pstmt.setString(1, departament);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    libros.add(rs.getString("TITOL"));
+                }
+            } 
+
+        } catch (SQLException e) {
+            throw new JDBCException("Error de base de datos: " + e.getMessage());
+        }
+    
+        return libros;
+
     }
 
 }
