@@ -8,7 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.lang.AutoCloseable;
 import cat.paucasesnovescifp.sppro.jdbc.auxiliars.JDBCException;
 
 /**
@@ -120,6 +119,65 @@ public class BibliotecaDao {
             throw new JDBCException("Error de base de datos: " + e.getMessage());
         }
 
+    }
+
+    /**
+     * Exercici: 6
+     * 
+     * Crea un mètode a la classe BibliotecaDao que rebi com a paràmetre el valor
+     * d'un departament i l’esborri de la base de dades. Procura que sigui una que
+     * no activi cap cascade. Si hi ha cap errada ha de llençar una excepció.
+     * Crida’l des del main passant-li algun dels departaments que has insertat
+     * provant l’exercici anterior.
+     * 
+     * @author Donovan Perello
+     */
+
+    public int borrarDepartament(String departament) throws JDBCException {
+
+        String sql = "DELETE FROM DEPARTAMENTS WHERE DEPARTAMENT = '" + departament + "'";
+        try (
+                Connection con = DriverManager.getConnection(url, uP);
+                Statement st = con.createStatement();
+
+        ) {
+            int filesAfectades = st.executeUpdate(sql);
+
+            return filesAfectades;
+
+        } catch (SQLException e) {
+
+            throw new JDBCException("Error de base de datos: " + e.getMessage());
+        }
+
+    }
+
+    /**
+     * Exercici: 7
+     * 
+     * Crea un mètode a la classe BibliotecaDao que rebi com a paràmetre el valor
+     * d'un departament i torni els títols de tots els llibres que contenguin aquest
+     * valor com a clau forana. Utilitza un Statement. Prova'l desde ProvesJDBC.
+     * 
+     * @author Donovan Perello
+     */
+
+    public List<String> llibresDepartament(String departament) throws JDBCException {
+        List<String> libros = new ArrayList<>();
+        String sql = "SELECT TITOL FROM LLIBRES WHERE FK_DEPARTAMENT = '" + departament + "'";
+        try (Connection con = DriverManager.getConnection(url, uP);
+                Statement st = con.createStatement();
+                ResultSet rs = st.executeQuery(sql);) {
+            while (rs.next()) {
+
+                libros.add(rs.getString("TITOL"));
+            }
+
+        } catch (SQLException e) {
+
+            throw new JDBCException("Error de base de datos: " + e.getMessage());
+        }
+        return libros;
     }
 
 }

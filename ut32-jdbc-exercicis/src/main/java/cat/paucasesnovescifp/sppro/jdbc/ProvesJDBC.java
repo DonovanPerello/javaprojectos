@@ -1,8 +1,5 @@
 package cat.paucasesnovescifp.sppro.jdbc;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -31,12 +28,18 @@ public class ProvesJDBC {
 
             BibliotecaDao biblio = new BibliotecaDao(urlDb, credencials);
             List<String> departamentos = biblio.departamentsBiblio();
+            List<String> libros = biblio.llibresDepartament("Música");
 
             System.out.println("--- Llista de Departaments ---");
             for (String dep : departamentos) {
                 System.out.println("- " + dep);
             }
-            System.out.println("Insertar Departament: " + biblio.insertarDepartament("PruebaDepartament"));
+            for (String lib : libros) {
+                System.out.println("-- " + lib);
+            }
+            // System.out.println("Insertar Departament: " +
+            // biblio.insertarDepartament("PruebaDepartament"));
+            System.out.println("Borrar Departament: " + biblio.borrarDepartament("PruebaDepartament"));
         } catch (JDBCException e) {
 
             System.out.println("Error en la configuració de les dades: " + e.getMessage());
